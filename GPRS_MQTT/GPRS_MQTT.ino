@@ -6,7 +6,7 @@
                                        // https://arduinojson.org/v5/assistant/
 
 #define SERIAL_MON_BAUD_RATE   115200  // 115.2K baud serial connection to computer
-#define DATA_PUB_FREQUENCY     30000L  // ms -> 30 seconds
+#define DATA_PUB_FREQUENCY     3000L  // ms -> 3 seconds
 
 StaticJsonDocument<JSON_BUFFER_SIZE> DATA; // Json file that'll contain all data
 
@@ -28,7 +28,7 @@ void loop() {
     data_ += String(packet_id++);
     DATA["1st_Tag"]["Sub_Tag"] = data_;
     DATA["2nd_Tag"]["Sub_Tag"]["Sub-Sub-Tag"] = data_;
-  
+    Serial.println(data_);
     communicate_();
     
     last_time_published = millis();

@@ -7,11 +7,11 @@
   
   #include <PubSubClient.h>  // https://github.com/knolleary/pubsubclient/
   
-  #define BROKER            "io.adafruit.com"
+  #define BROKER            "broker.emqx.io"
   #define MQTT_PORT         1883
   #define MQTT_USER         "" // User name in adafruit.io
   #define MQTT_PASSWORD     "" // MQTT Key in adafruit.io
-  #define TOPIC             "" // User_Name/feeds/Topic_Name_Of_Choice
+  #define TOPIC             "/iobee_test/MACADDRESS/connect" // User_Name/feeds/Topic_Name_Of_Choice
   
   // Create mqtt port (client might be a wifi or gprs client)
   PubSubClient  mqtt(client);

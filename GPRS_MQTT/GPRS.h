@@ -24,9 +24,9 @@
   #define GPRS_READY_             5
   
   // GPRS data
-  #define GPRS_USER               ""
-  #define GPRS_PASS               ""
-  #define APN                     ""      // APN (google the apn of your network provider in your country)
+  #define GPRS_USER               "claro"
+  #define GPRS_PASS               "claro"
+  #define APN                     "claro.com.br"      // APN (google the apn of your network provider in your country)
   #define SIM_PIN                 ""      // If SIM is locked, provide the PUK code
   
   // Timeout connection before automatically restarting
