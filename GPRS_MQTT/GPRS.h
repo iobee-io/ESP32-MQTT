@@ -152,4 +152,7 @@
   bool GPRS_connectivity_status(){
     return modem.isGprsConnected();
    }
+//  String GPRS_imei(){
+//    return modem.getIMEI();
+//   }
 #endif

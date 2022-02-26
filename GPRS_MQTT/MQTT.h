@@ -19,14 +19,14 @@
   void MQTT_setup();
   void MQTT_connect();
   void MQTT_subscribe();
-  void MQTT_callback(char*, byte*, unsigned int);
+
   void send_data(const char*);
   bool mqtt_state();
   
   
-  void MQTT_setup(){
+  void MQTT_setup(void (&MQTT_callback)(char*, byte*, unsigned int)){
     mqtt.setServer(BROKER, MQTT_PORT);
-    //mqtt.setCallback(MQTT_callback);
+    mqtt.setCallback(MQTT_callback);
   }
   
   void MQTT_connect(){
@@ -40,21 +40,15 @@
   }
   
   void MQTT_subscribe(){
-     mqtt.subscribe(TOPIC);
-  }
-  
-  // Use this function in case the module is expected to receive data
-  // as well as send it. In such case, depending on the topic, 
-  // you can do whatever you want.
-  void MQTT_callback(char* topic, byte* message, unsigned int len){
-    String recieved_msg = "";
-    for (int i = 0; i < len; i++) {
-      recieved_msg += (char)message[i];
-    }
+     mqtt.subscribe("dev/asset3.XX.XX.XX.XX/write/do/1");
   }
   
   void send_data(const char* buffer){
     mqtt.publish(TOPIC, buffer); // Publish the data
+    mqtt.loop();
+  }
+
+  void MQTT_loop(){
     mqtt.loop();
   }
   
