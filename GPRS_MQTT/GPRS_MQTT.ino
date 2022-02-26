@@ -26,8 +26,14 @@ void loop() {
     // Construct the Json file you want to send anyway you want
     String data_ = "Packet n° ";
     data_ += String(packet_id++);
-    DATA["1st_Tag"]["Sub_Tag"] = data_;
-    DATA["2nd_Tag"]["Sub_Tag"]["Sub-Sub-Tag"] = data_;
+    DATA["1"] = "1";
+    DATA["2"] = "1";
+    DATA["3"] = "0";
+    DATA["4"] = "1";
+    DATA["5"] = "0";
+    DATA["6"] = "1";
+    DATA["7"] = "0";
+    DATA["8"] = "0";
     Serial.println(data_);
     communicate_();
     
