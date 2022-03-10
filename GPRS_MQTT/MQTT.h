@@ -32,7 +32,10 @@
   void MQTT_connect(){
     
     while (!mqtt.connected()) {
-      if(mqtt.connect(BROKER, MQTT_USER, MQTT_PASSWORD))return;
+      if(mqtt.connect(BROKER, MQTT_USER, MQTT_PASSWORD)){
+        MQTT_subscribe();
+        return;
+      }
       else{
         delay(500);
       }
@@ -40,7 +43,7 @@
   }
   
   void MQTT_subscribe(){
-     mqtt.subscribe("dev/asset3.XX.XX.XX.XX/write/do/1");
+     mqtt.subscribe("dev/asset3.XX.XX.XX.XX/write/#");
   }
   
   void send_data(const char* buffer){

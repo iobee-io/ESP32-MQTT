@@ -1,6 +1,7 @@
 #include "GPRS.h" // You have to add your APN here!
 #include "MQTT.h" // You have to add your MQTT broker info here!
 
+#include <driver/dac.h>
 #include <ArduinoJson.h>
 #include <Adafruit_MCP23X17.h>
 #define JSON_BUFFER_SIZE       400     // Calculate the right number using:
@@ -25,7 +26,7 @@ void setup() {
   GPRS_wake_up();  
 
   MQTT_setup(MQTT_callback);
-  
+
   if (!mcp.begin_I2C()) {
     Serial.println("Error.");
     while (1);
@@ -33,7 +34,9 @@ void setup() {
 
   // configure pins
   mcp.pinMode(LED_PIN, OUTPUT);
-  mcp.pinMode(MCP_INPUTPIN,INPUT);     
+  mcp.pinMode(MCP_INPUTPIN,INPUT);  
+
+  dac_output_enable(DAC_CHANNEL_1);
 }
 
 
@@ -45,9 +48,7 @@ void communicate_(){
   // Prepare the Json file for sending
   serializeJson(DATA, mqtt_buffer);
 
-  // I did have some issues with the broker timing-out if I don't connect to it just before sending
-  MQTT_connect();
-  MQTT_subscribe();
+
   
   // Consult MQTT.h for send_data()
   send_data(mqtt_buffer);
@@ -57,6 +58,9 @@ void communicate_(){
 }
 
 void loop() {
+  // I did have some issues with the broker timing-out if I don't connect to it just before sending
+  MQTT_connect();
+  MQTT_loop();  
   // Send data each DATA_PUB_FREQUENCY (ms)
   if(millis() - last_time_published >= DATA_PUB_FREQUENCY){
   
@@ -80,7 +84,6 @@ void loop() {
 
     last_time_published = millis();
   }
-//  MQTT_loop();
 }
 
 void MQTT_callback(char*, byte*, unsigned int);
@@ -89,16 +92,32 @@ void MQTT_callback(char*, byte*, unsigned int);
 // as well as send it. In such case, depending on the topic, 
 // you can do whatever you want.
 void MQTT_callback(char* topic, byte* message, unsigned int len){
-  Serial.println(topic);
+  char *token;
+  int i = 0;
+  char *array[4]; 
+  char *p = strtok (topic, "/");
+
+  while (p != NULL)
+  {
+      array[i++] = p;
+      p = strtok (NULL, "/");
+  }
+  
+//  while ((token = strsep(&topic, "/")));
   String recieved_msg = "";
   for (int i = 0; i < len; i++) {
     recieved_msg += (char)message[i];
   }
-  if (recieved_msg == "0") {
-    mcp.digitalWrite(LED_PIN, LOW);        
+  if (String(array[3]) == "do") {
+    if (recieved_msg == "0") {
+      mcp.digitalWrite(LED_PIN, LOW);        
+    } 
+    if (recieved_msg == "1") {
+      mcp.digitalWrite(LED_PIN, HIGH);    
+    }    
   } 
-  if (recieved_msg == "1") {
-    mcp.digitalWrite(LED_PIN, HIGH);    
+  if (String(array[3]) == "ao") {    
+    dac_output_voltage(DAC_CHANNEL_1, String(recieved_msg).toInt());  
   }
   Serial.println(recieved_msg);
 }
